@@ -93,27 +93,23 @@ galleryContainer.addEventListener('click', (event) => {
     openModal(largeImageURL, imageIndex);
 });
 
-function openModal(imageURL, imageIndex) {
-    const totalImages = images.length;
-    const instance = basicLightbox.create(`
+function createModalContent(imageURL, imageIndex, totalImages) {
+    return `
         <div class="modal">
             <div class="image-number">${imageIndex}/${totalImages}</div>
             <img src="${imageURL}" alt="Large Image" />
             <button class="nav-button prev-button">&lt;</button>
             <button class="nav-button next-button">&gt;</button>
         </div>
-    `, {
-        onShow: (instance) => {
-            instance.element().querySelector('.prev-button').onclick = () => navigateImage(instance, Number(imageIndex) - 1, 'prev');
-            instance.element().querySelector('.next-button').onclick = () => navigateImage(instance, Number(imageIndex) + 1, 'next');
-        }
-    });
-    instance.show();
+    `;
 }
 
-function navigateImage(instance, newIndex, direction) {
-    if (newIndex < 1) newIndex = images.length;
-    if (newIndex > images.length) newIndex = 1;
+function setNavigationHandlers(instance, imageIndex) {
+    instance.element().querySelector('.prev-button').onclick = () => navigateImage(instance, Number(imageIndex) - 1, 'prev');
+    instance.element().querySelector('.next-button').onclick = () => navigateImage(instance, Number(imageIndex) + 1, 'next');
+}
+
+function updateImage(instance, newIndex, direction) {
     const newImage = images[newIndex - 1];
     const modalContent = instance.element();
     const imgElement = modalContent.querySelector('img');
@@ -133,7 +129,19 @@ function navigateImage(instance, newIndex, direction) {
     imgElement.addEventListener('animationend', () => {
         imgElement.classList.remove(slideInClass);
     });
+}
 
-    modalContent.querySelector('.prev-button').onclick = () => navigateImage(instance, newIndex - 1, 'prev');
-    modalContent.querySelector('.next-button').onclick = () => navigateImage(instance, newIndex + 1, 'next');
+function openModal(imageURL, imageIndex) {
+    const totalImages = images.length;
+    const instance = basicLightbox.create(createModalContent(imageURL, imageIndex, totalImages), {
+        onShow: (instance) => setNavigationHandlers(instance, imageIndex)
+    });
+    instance.show();
+}
+
+function navigateImage(instance, newIndex, direction) {
+    if (newIndex < 1) newIndex = images.length;
+    if (newIndex > images.length) newIndex = 1;
+    updateImage(instance, newIndex, direction);
+    setNavigationHandlers(instance, newIndex);
 }
