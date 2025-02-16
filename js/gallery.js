@@ -99,7 +99,25 @@ function openModal(imageURL, imageIndex) {
         <div class="modal">
             <div class="image-number">${imageIndex}/${totalImages}</div>
             <img src="${imageURL}" alt="Large Image" />
+            <button class="nav-button prev-button">&lt;</button>
+            <button class="nav-button next-button">&gt;</button>
         </div>
-    `);
+    `, {
+        onShow: (instance) => {
+            instance.element().querySelector('.prev-button').onclick = () => navigateImage(instance, imageIndex - 1);
+            instance.element().querySelector('.next-button').onclick = () => navigateImage(instance, imageIndex + 1);
+        }
+    });
     instance.show();
+}
+
+function navigateImage(instance, newIndex) {
+    if (newIndex < 1) newIndex = images.length;
+    if (newIndex > images.length) newIndex = 1;
+    const newImage = images[newIndex - 1];
+    const modalContent = instance.element();
+    modalContent.querySelector('img').src = newImage.original;
+    modalContent.querySelector('.image-number').textContent = `${newIndex}/${images.length}`;
+    modalContent.querySelector('.prev-button').onclick = () => navigateImage(instance, newIndex - 1);
+    modalContent.querySelector('.next-button').onclick = () => navigateImage(instance, newIndex + 1);
 }
