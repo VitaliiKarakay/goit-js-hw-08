@@ -69,3 +69,63 @@ body {
 .next-button {
     right: 10px;
 }
+
+.slide-out-left {
+    animation: slideOutLeft 250ms forwards;
+}
+
+.slide-in-right {
+    animation: slideInRight 250ms forwards;
+}
+
+.slide-out-right {
+    animation: slideOutRight 250ms forwards;
+}
+
+.slide-in-left {
+    animation: slideInLeft 250ms forwards;
+}
+
+@keyframes slideOutLeft {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

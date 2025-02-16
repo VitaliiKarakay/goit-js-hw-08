@@ -104,20 +104,36 @@ function openModal(imageURL, imageIndex) {
         </div>
     `, {
         onShow: (instance) => {
-            instance.element().querySelector('.prev-button').onclick = () => navigateImage(instance, imageIndex - 1);
-            instance.element().querySelector('.next-button').onclick = () => navigateImage(instance, imageIndex + 1);
+            instance.element().querySelector('.prev-button').onclick = () => navigateImage(instance, Number(imageIndex) - 1, 'prev');
+            instance.element().querySelector('.next-button').onclick = () => navigateImage(instance, Number(imageIndex) + 1, 'next');
         }
     });
     instance.show();
 }
 
-function navigateImage(instance, newIndex) {
+function navigateImage(instance, newIndex, direction) {
     if (newIndex < 1) newIndex = images.length;
     if (newIndex > images.length) newIndex = 1;
     const newImage = images[newIndex - 1];
     const modalContent = instance.element();
-    modalContent.querySelector('img').src = newImage.original;
-    modalContent.querySelector('.image-number').textContent = `${newIndex}/${images.length}`;
-    modalContent.querySelector('.prev-button').onclick = () => navigateImage(instance, newIndex - 1);
-    modalContent.querySelector('.next-button').onclick = () => navigateImage(instance, newIndex + 1);
+    const imgElement = modalContent.querySelector('img');
+    const imageNumberElement = modalContent.querySelector('.image-number');
+
+    const slideOutClass = direction === 'next' ? 'slide-out-left' : 'slide-out-right';
+    const slideInClass = direction === 'next' ? 'slide-in-right' : 'slide-in-left';
+
+    imgElement.classList.add(slideOutClass);
+    setTimeout(() => {
+        imgElement.src = newImage.original;
+        imageNumberElement.textContent = `${newIndex}/${images.length}`;
+        imgElement.classList.remove(slideOutClass);
+        imgElement.classList.add(slideInClass);
+    }, 250);
+
+    imgElement.addEventListener('animationend', () => {
+        imgElement.classList.remove(slideInClass);
+    });
+
+    modalContent.querySelector('.prev-button').onclick = () => navigateImage(instance, newIndex - 1, 'prev');
+    modalContent.querySelector('.next-button').onclick = () => navigateImage(instance, newIndex + 1, 'next');
 }
